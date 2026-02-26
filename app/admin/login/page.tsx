@@ -3,7 +3,6 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { BookOpen, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -44,27 +43,26 @@ export default function AdminLoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
-      <nav className="border-b border-border">
-        <div className="mx-auto max-w-3xl px-4 py-3 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2">
-            <BookOpen className="h-5 w-5" />
-            <span className="font-medium text-sm">Timekeepur</span>
+    <div className="min-h-screen flex flex-col bg-background">
+      <header className="border-b border-border">
+        <div className="mx-auto max-w-2xl px-4 h-12 flex items-center justify-between">
+          <Link href="/" className="text-sm font-medium tracking-tight">
+            Timekeepur
           </Link>
-          <Link href="/">
-            <Button variant="ghost" size="sm">Back</Button>
+          <Link href="/" className="text-xs text-muted-foreground hover:text-foreground transition-colors">
+            Back
           </Link>
         </div>
-      </nav>
+      </header>
 
-      <main className="flex-1 flex items-center justify-center px-4 py-12">
+      <main className="flex-1 flex items-center justify-center px-4">
         <div className="w-full max-w-xs">
-          <div className="text-center mb-6">
-            <h1 className="text-lg font-semibold">Admin Login</h1>
-            <p className="text-xs text-muted-foreground">Sign in to moderate</p>
+          <div className="mb-6">
+            <h1 className="text-lg font-medium tracking-tight">Admin</h1>
+            <p className="text-xs text-muted-foreground mt-0.5">Sign in to moderate</p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-3">
+          <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-1.5">
               <Label htmlFor="email" className="text-xs">Email</Label>
               <Input
@@ -92,15 +90,8 @@ export default function AdminLoginPage() {
             {error && (
               <p className="text-xs text-destructive">{error}</p>
             )}
-            <Button type="submit" className="w-full" size="sm" disabled={isLoading}>
-              {isLoading ? (
-                <>
-                  <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
-                  Signing in...
-                </>
-              ) : (
-                'Sign In'
-              )}
+            <Button type="submit" className="w-full h-9 text-sm" disabled={isLoading}>
+              {isLoading ? 'Signing in...' : 'Sign In'}
             </Button>
           </form>
           <p className="text-[10px] text-muted-foreground mt-4 text-center">

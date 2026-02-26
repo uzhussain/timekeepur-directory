@@ -2,12 +2,10 @@
 
 import { useState, useTransition } from 'react'
 import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Textarea } from '@/components/ui/textarea'
 import { GuestbookMessage } from '@/lib/db'
 import { approveMessage, rejectMessage } from '@/app/actions/message-actions'
-import { Check, X, Loader2 } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
 
 interface AdminMessageListProps {
@@ -57,11 +55,8 @@ export function AdminMessageList({ initialMessages }: AdminMessageListProps) {
   return (
     <Tabs value={activeTab} onValueChange={setActiveTab}>
       <TabsList className="mb-4 h-8">
-        <TabsTrigger value="pending" className="text-xs h-7 gap-1.5">
-          Pending
-          {pendingCount > 0 && (
-            <Badge variant="secondary" className="text-[10px] px-1 py-0">{pendingCount}</Badge>
-          )}
+        <TabsTrigger value="pending" className="text-xs h-7">
+          Pending {pendingCount > 0 && `(${pendingCount})`}
         </TabsTrigger>
         <TabsTrigger value="approved" className="text-xs h-7">Approved</TabsTrigger>
         <TabsTrigger value="rejected" className="text-xs h-7">Rejected</TabsTrigger>
@@ -70,7 +65,7 @@ export function AdminMessageList({ initialMessages }: AdminMessageListProps) {
 
       <TabsContent value={activeTab} className="space-y-3">
         {filteredMessages.length === 0 ? (
-          <div className="text-center py-8 border border-dashed border-border rounded-md">
+          <div className="py-12 text-center">
             <p className="text-sm text-muted-foreground">No messages</p>
           </div>
         ) : (
@@ -108,53 +103,50 @@ function MessageItem({
   notes,
   onNotesChange
 }: MessageItemProps) {
-  const enhanceLabel = message.enhanced_type === 'emoji'
-    ? 'Emoji'
-    : message.enhanced_type === 'translated'
-    ? message.language.toUpperCase()
-    : null
-
   return (
-    <div className="border border-border rounded-md p-4">
-      <div className="flex items-center justify-between gap-3 mb-2">
-        <div className="flex items-center gap-2 min-w-0">
-          <span className="font-medium text-sm truncate">{message.name}</span>
-          <span className="text-xs text-muted-foreground shrink-0">
-            {formatDistanceToNow(new Date(message.created_at), { addSuffix: true })}
-          </span>
+    <article className="border border-border rounded p-4">
+      <div className="flex items-baseline justify-between gap-3 mb-2">
+        <div className="flex items-baseline gap-2 min-w-0">
+          <span className="text-sm font-medium truncate">{message.name}</span>
           {message.email && (
-            <span className="text-xs text-muted-foreground truncate hidden sm:inline">
+            <span className="text-[11px] text-muted-foreground truncate hidden sm:inline">
               {message.email}
             </span>
           )}
         </div>
-        <div className="flex items-center gap-1.5 shrink-0">
-          {enhanceLabel && (
-            <Badge variant="outline" className="text-[10px] px-1.5 py-0">
-              {enhanceLabel}
-            </Badge>
+        <div className="flex items-center gap-2">
+          {message.enhanced_type !== 'original' && (
+            <span className="text-[10px] text-muted-foreground uppercase tracking-wide">
+              {message.enhanced_type === 'emoji' ? 'emoji' : message.language}
+            </span>
           )}
-          <Badge 
-            variant={message.status === 'approved' ? 'default' : message.status === 'rejected' ? 'destructive' : 'secondary'}
-            className="text-[10px] px-1.5 py-0"
-          >
+          <span className={`text-[10px] uppercase tracking-wide ${
+            message.status === 'approved' 
+              ? 'text-foreground' 
+              : message.status === 'rejected' 
+              ? 'text-destructive' 
+              : 'text-muted-foreground'
+          }`}>
             {message.status}
-          </Badge>
+          </span>
+          <time className="text-[11px] text-muted-foreground">
+            {formatDistanceToNow(new Date(message.created_at), { addSuffix: true })}
+          </time>
         </div>
       </div>
       
-      <p className={`text-sm mb-3 ${message.enhanced_type === 'emoji' ? 'text-xl' : ''}`}>
+      <p className={`text-sm leading-relaxed ${message.enhanced_type === 'emoji' ? 'text-lg' : ''}`}>
         {message.message}
       </p>
       
       {message.original_message && (
-        <p className="text-xs text-muted-foreground mb-3">
+        <p className="text-[11px] text-muted-foreground mt-2">
           Original: {message.original_message}
         </p>
       )}
 
       {message.status === 'pending' && (
-        <div className="flex items-center gap-2 pt-3 border-t border-border">
+        <div className="flex items-center gap-2 pt-3 mt-3 border-t border-border">
           <Textarea
             placeholder="Notes (optional)"
             value={notes}
@@ -167,30 +159,28 @@ function MessageItem({
             onClick={onApprove}
             disabled={isProcessing}
             size="sm"
-            className="h-8 gap-1"
+            className="h-8 text-xs"
           >
-            {isProcessing ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Check className="h-3.5 w-3.5" />}
-            <span className="hidden sm:inline">Approve</span>
+            {isProcessing ? 'Processing...' : 'Approve'}
           </Button>
           <Button
             onClick={onReject}
             disabled={isProcessing}
             variant="outline"
             size="sm"
-            className="h-8 gap-1"
+            className="h-8 text-xs"
           >
-            {isProcessing ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <X className="h-3.5 w-3.5" />}
-            <span className="hidden sm:inline">Reject</span>
+            Reject
           </Button>
         </div>
       )}
 
       {message.status !== 'pending' && message.moderated_by && (
-        <p className="text-[10px] text-muted-foreground pt-2 border-t border-border">
+        <p className="text-[10px] text-muted-foreground pt-2 mt-2 border-t border-border">
           Moderated by {message.moderated_by}
           {message.moderation_notes && ` - ${message.moderation_notes}`}
         </p>
       )}
-    </div>
+    </article>
   )
 }

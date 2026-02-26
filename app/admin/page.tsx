@@ -1,6 +1,5 @@
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
-import { BookOpen, ArrowLeft, LogOut } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { getSession, destroySession } from '@/lib/auth'
 import { getAllMessages } from '@/lib/db'
@@ -25,52 +24,49 @@ export default async function AdminPage() {
   const rejectedCount = messages.filter(m => m.status === 'rejected').length
 
   return (
-    <div className="min-h-screen bg-background">
-      <nav className="border-b border-border">
-        <div className="mx-auto max-w-4xl px-4 py-3 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2">
-            <BookOpen className="h-5 w-5" />
-            <span className="font-medium text-sm">Timekeepur</span>
+    <div className="min-h-screen flex flex-col bg-background">
+      <header className="border-b border-border">
+        <div className="mx-auto max-w-3xl px-4 h-12 flex items-center justify-between">
+          <Link href="/" className="text-sm font-medium tracking-tight">
+            Timekeepur
           </Link>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-4">
             <span className="text-xs text-muted-foreground">{session.email}</span>
             <form action={signOutAction}>
-              <Button variant="ghost" size="sm" type="submit" className="h-8 gap-1.5">
-                <LogOut className="h-3.5 w-3.5" />
+              <Button variant="ghost" size="sm" type="submit" className="h-7 text-xs px-2">
                 Sign Out
               </Button>
             </form>
           </div>
         </div>
-      </nav>
+      </header>
 
-      <main className="py-8 px-4">
-        <div className="mx-auto max-w-4xl">
+      <main className="flex-1 py-8 px-4">
+        <div className="mx-auto max-w-3xl">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h1 className="text-lg font-semibold">Admin</h1>
-              <p className="text-xs text-muted-foreground">Moderate submissions</p>
+              <h1 className="text-lg font-medium tracking-tight">Admin</h1>
+              <p className="text-xs text-muted-foreground mt-0.5">Moderate submissions</p>
             </div>
             <Link href="/">
-              <Button variant="outline" size="sm" className="gap-1.5">
-                <ArrowLeft className="h-3.5 w-3.5" />
-                Back
+              <Button variant="outline" size="sm" className="h-8 text-xs">
+                Back to Directory
               </Button>
             </Link>
           </div>
 
-          <div className="grid grid-cols-3 gap-3 mb-6">
-            <div className="p-3 rounded-md border border-border">
-              <p className="text-[10px] uppercase tracking-wide text-muted-foreground">Pending</p>
-              <p className="text-xl font-semibold">{pendingCount}</p>
+          <div className="grid grid-cols-3 gap-3 mb-8">
+            <div className="p-3 border border-border rounded">
+              <p className="text-[10px] uppercase tracking-wide text-muted-foreground mb-1">Pending</p>
+              <p className="text-xl font-medium">{pendingCount}</p>
             </div>
-            <div className="p-3 rounded-md border border-border">
-              <p className="text-[10px] uppercase tracking-wide text-muted-foreground">Approved</p>
-              <p className="text-xl font-semibold">{approvedCount}</p>
+            <div className="p-3 border border-border rounded">
+              <p className="text-[10px] uppercase tracking-wide text-muted-foreground mb-1">Approved</p>
+              <p className="text-xl font-medium">{approvedCount}</p>
             </div>
-            <div className="p-3 rounded-md border border-border">
-              <p className="text-[10px] uppercase tracking-wide text-muted-foreground">Rejected</p>
-              <p className="text-xl font-semibold">{rejectedCount}</p>
+            <div className="p-3 border border-border rounded">
+              <p className="text-[10px] uppercase tracking-wide text-muted-foreground mb-1">Rejected</p>
+              <p className="text-xl font-medium">{rejectedCount}</p>
             </div>
           </div>
 
