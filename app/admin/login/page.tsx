@@ -1,59 +1,48 @@
+'use client'
+
+import { useState } from 'react'
 import Link from 'next/link'
-import { redirect } from 'next/navigation'
-import { BookOpen, Shield, AlertTriangle } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import { BookOpen, Shield, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { getStackServerApp, isStackAuthConfigured } from '@/lib/stack-auth'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 
-export default async function AdminLoginPage() {
-  // Check if Stack Auth is configured
-  if (!isStackAuthConfigured) {
-    return (
-      <div className="min-h-screen bg-background flex flex-col">
-        <nav className="border-b border-border">
-          <div className="mx-auto max-w-6xl px-4 py-4 flex items-center justify-between">
-            <Link href="/" className="flex items-center gap-2">
-              <BookOpen className="h-6 w-6 text-foreground" />
-              <span className="font-semibold text-lg text-foreground">Timekeepur Directory</span>
-            </Link>
-            <Link href="/">
-              <Button variant="ghost" size="sm">Back to Site</Button>
-            </Link>
-          </div>
-        </nav>
-        <main className="flex-1 flex items-center justify-center px-4 py-12">
-          <Card className="w-full max-w-md border-yellow-200 dark:border-yellow-800 bg-yellow-50 dark:bg-yellow-950">
-            <CardHeader className="text-center">
-              <div className="mx-auto h-12 w-12 rounded-full bg-yellow-100 dark:bg-yellow-900 flex items-center justify-center mb-4">
-                <AlertTriangle className="h-6 w-6 text-yellow-600 dark:text-yellow-400" />
-              </div>
-              <CardTitle className="text-yellow-800 dark:text-yellow-200">Configuration Required</CardTitle>
-              <CardDescription className="text-yellow-700 dark:text-yellow-300">
-                Stack Auth (Neon Auth) is not configured
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="text-yellow-700 dark:text-yellow-300 text-sm">
-              <p>Set the following environment variables:</p>
-              <ul className="list-disc list-inside mt-2 space-y-1">
-                <li><code className="bg-yellow-100 dark:bg-yellow-900 px-1 rounded">NEXT_PUBLIC_STACK_PROJECT_ID</code></li>
-                <li><code className="bg-yellow-100 dark:bg-yellow-900 px-1 rounded">STACK_SECRET_SERVER_KEY</code></li>
-              </ul>
-            </CardContent>
-          </Card>
-        </main>
-      </div>
-    )
+export default function AdminLoginPage() {
+  const router = useRouter()
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [error, setError] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setError('')
+    setIsLoading(true)
+
+    try {
+      const res = await fetch('/api/admin/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      })
+
+      const data = await res.json()
+
+      if (!res.ok) {
+        setError(data.error || 'Login failed')
+        return
+      }
+
+      router.push('/admin')
+      router.refresh()
+    } catch {
+      setError('An error occurred. Please try again.')
+    } finally {
+      setIsLoading(false)
+    }
   }
-
-  const stackApp = await getStackServerApp()
-  const user = stackApp ? await stackApp.getUser() : null
-  
-  if (user) {
-    redirect('/admin')
-  }
-
-  // Dynamically import SignIn only when Stack Auth is configured
-  const { SignIn } = await import('@stack-auth/react')
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
@@ -82,7 +71,46 @@ export default async function AdminLoginPage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <SignIn />
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="admin@timekeepur.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="password">Password</Label>
+                <Input
+                  id="password"
+                  type="password"
+                  placeholder="Enter your password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                />
+              </div>
+              {error && (
+                <p className="text-sm text-destructive">{error}</p>
+              )}
+              <Button type="submit" className="w-full" disabled={isLoading}>
+                {isLoading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Signing in...
+                  </>
+                ) : (
+                  'Sign In'
+                )}
+              </Button>
+            </form>
+            <p className="text-xs text-muted-foreground mt-4 text-center">
+              Default credentials: admin@timekeepur.com / admin123
+            </p>
           </CardContent>
         </Card>
       </main>

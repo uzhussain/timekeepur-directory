@@ -2,7 +2,7 @@
 
 import { createMessage, updateMessageStatus } from '@/lib/db'
 import { moderateMessage, translateMessage, convertToEmoji } from './ai-actions'
-import { stackServerApp } from '@/lib/stack-auth'
+import { getSession } from '@/lib/auth'
 import { revalidateTag } from 'next/cache'
 
 export type SubmitResult = {
@@ -86,14 +86,14 @@ export async function submitGuestbookMessage(formData: FormData): Promise<Submit
 }
 
 export async function approveMessage(id: number, notes?: string): Promise<SubmitResult> {
-  const user = await stackServerApp.getUser()
+  const session = await getSession()
   
-  if (!user) {
+  if (!session) {
     return { success: false, error: 'Unauthorized - admin login required' }
   }
 
   try {
-    await updateMessageStatus(id, 'approved', user.primaryEmail || user.id, notes)
+    await updateMessageStatus(id, 'approved', session.email, notes)
     revalidateTag('guestbook-messages', 'max')
     return { success: true, message: 'Message approved successfully' }
   } catch (error) {
@@ -103,14 +103,14 @@ export async function approveMessage(id: number, notes?: string): Promise<Submit
 }
 
 export async function rejectMessage(id: number, notes?: string): Promise<SubmitResult> {
-  const user = await stackServerApp.getUser()
+  const session = await getSession()
   
-  if (!user) {
+  if (!session) {
     return { success: false, error: 'Unauthorized - admin login required' }
   }
 
   try {
-    await updateMessageStatus(id, 'rejected', user.primaryEmail || user.id, notes)
+    await updateMessageStatus(id, 'rejected', session.email, notes)
     revalidateTag('guestbook-messages', 'max')
     return { success: true, message: 'Message rejected' }
   } catch (error) {
