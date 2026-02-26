@@ -2,15 +2,15 @@
 
 A clean, moderated message board for communities and OSS directories.
 
-Built with Next.js, powered by **Vercel AI Gateway** for AI workflows, and backed by **Neon Postgres**.
+Built with **Next.js**, powered by **Vercel AI Gateway** for AI workflows, and backed by **Neon Postgres**.
 
 ## Features
 
 - Public feed of approved messages
-- Submission form with optional AI enhancement (`original`, `emoji`, `translate`)
-- AI moderation before messages are saved
-- Admin dashboard to approve or reject submissions
-- Session-based admin auth with secure cookies
+- Message submission sheet with AI enhancement options (`original`, `emoji`, `translate`)
+- AI moderation before save
+- Admin queue for approve/reject
+- Session-based admin authentication
 
 ## Stack
 
@@ -21,24 +21,26 @@ Built with Next.js, powered by **Vercel AI Gateway** for AI workflows, and backe
 
 ## Quick Start
 
-### 1) Install
+1. Install dependencies
 
 ```bash
-npm install
+pnpm install
 ```
 
-### 2) Set environment variables
-
-Create `.env.local`:
+2. Copy env file and set values
 
 ```bash
-DATABASE_URL=postgres://...
-ADMIN_EMAIL=admin@example.com
-ADMIN_PASSWORD=change-this-password
-AI_GATEWAY_API_KEY=...
+cp .env.example .env.local
 ```
 
-### 3) Create the `guestbook_messages` table
+Required variables:
+
+- `DATABASE_URL`
+- `ADMIN_EMAIL`
+- `ADMIN_PASSWORD`
+- `AI_GATEWAY_API_KEY`
+
+3. Create the `guestbook_messages` table
 
 ```sql
 CREATE TABLE IF NOT EXISTS guestbook_messages (
@@ -60,45 +62,33 @@ CREATE TABLE IF NOT EXISTS guestbook_messages (
 
 `admin_sessions` is created automatically on first admin login.
 
-### 4) Run
+4. Start the app
 
 ```bash
-npm run dev
+pnpm dev
 ```
 
 Open `http://localhost:3000`.
 
 ## Scripts
 
-- `npm run dev` - local development
-- `npm run build` - production build
-- `npm run start` - run production server
-- `npm run lint` - lint checks
+- `pnpm dev` - local development
+- `pnpm build` - production build
+- `pnpm start` - start production server
+- `pnpm lint` - lint checks
 
-## Key Files
+## OSS Notes
 
-- `app/page.tsx` - public directory UI
-- `components/post-message-sheet.tsx` - message submission form
-- `app/actions/ai-actions.ts` - moderation/translation/emoji generation
-- `app/actions/message-actions.ts` - submission + moderation actions
-- `app/admin/login/page.tsx` - admin login
-- `app/admin/page.tsx` - admin moderation dashboard
-- `lib/db.ts` - Neon database queries
-- `lib/auth.ts` - admin auth/session logic
+- Read `CONTRIBUTING.md` before opening a PR
+- See `SECURITY.md` for responsible disclosure
+- Follow `CODE_OF_CONDUCT.md` for community standards
 
-## Customize for OSS
+## Official Author
 
-- Update branding and copy in `app/page.tsx`
-- Add or remove form fields in `components/post-message-sheet.tsx`
-- Tune AI behavior in `app/actions/ai-actions.ts`
-- Adjust moderation logic in `app/actions/message-actions.ts`
-
-## Security Notes
-
-- Keep all secrets in environment variables
-- Use a strong `ADMIN_PASSWORD` in production
-- Use HTTPS in production
+**Uzair Hussain**  
+Website: https://www.timekeepur.com/  
+GitHub: https://github.com/uzhussain
 
 ## License
 
-Add the license that matches your project (for example, MIT).
+MIT. See `LICENSE`.
