@@ -5,11 +5,10 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { submitGuestbookMessage } from '@/app/actions/message-actions'
-import { Loader2, Send, Sparkles, Globe, MessageSquare, CheckCircle, XCircle } from 'lucide-react'
+import { Loader2 } from 'lucide-react'
 
 const LANGUAGES = [
   { value: 'es', label: 'Spanish' },
@@ -42,7 +41,6 @@ export function GuestbookForm() {
       setResult(response)
       
       if (response.success) {
-        // Reset form on success
         const form = document.getElementById('guestbook-form') as HTMLFormElement
         form?.reset()
         setEnhanceType('original')
@@ -52,157 +50,118 @@ export function GuestbookForm() {
   }
 
   return (
-    <Card className="border-border">
-      <CardHeader>
-        <CardTitle className="text-foreground">Sign the Guestbook</CardTitle>
-        <CardDescription>
-          Leave a message for our community. Add AI enhancements to make it special!
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <form id="guestbook-form" action={handleSubmit} className="space-y-6">
-          <div className="grid sm:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="name" className="text-foreground">Name *</Label>
-              <Input
-                id="name"
-                name="name"
-                placeholder="Your name"
-                required
-                maxLength={100}
-                disabled={isPending}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="email" className="text-foreground">Email (optional)</Label>
-              <Input
-                id="email"
-                name="email"
-                type="email"
-                placeholder="your@email.com"
-                disabled={isPending}
-              />
-            </div>
-          </div>
+    <form id="guestbook-form" action={handleSubmit} className="space-y-4">
+      <div className="grid sm:grid-cols-2 gap-3">
+        <div className="space-y-1.5">
+          <Label htmlFor="name" className="text-xs">Name</Label>
+          <Input
+            id="name"
+            name="name"
+            placeholder="Your name"
+            required
+            maxLength={100}
+            disabled={isPending}
+            className="h-9 text-sm"
+          />
+        </div>
+        <div className="space-y-1.5">
+          <Label htmlFor="email" className="text-xs">Email <span className="text-muted-foreground">(optional)</span></Label>
+          <Input
+            id="email"
+            name="email"
+            type="email"
+            placeholder="your@email.com"
+            disabled={isPending}
+            className="h-9 text-sm"
+          />
+        </div>
+      </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="message" className="text-foreground">Message *</Label>
-            <Textarea
-              id="message"
-              name="message"
-              placeholder="Write your message here..."
-              required
-              maxLength={1000}
-              rows={4}
-              disabled={isPending}
-            />
-            <p className="text-xs text-muted-foreground">Max 1000 characters</p>
-          </div>
+      <div className="space-y-1.5">
+        <Label htmlFor="message" className="text-xs">Message</Label>
+        <Textarea
+          id="message"
+          name="message"
+          placeholder="Write your message..."
+          required
+          maxLength={1000}
+          rows={3}
+          disabled={isPending}
+          className="text-sm resize-none"
+        />
+      </div>
 
-          {/* AI Enhancement Options */}
-          <div className="space-y-3">
-            <Label className="text-foreground">AI Enhancement (optional)</Label>
-            <RadioGroup
-              value={enhanceType}
-              onValueChange={setEnhanceType}
-              className="grid sm:grid-cols-3 gap-3"
-              disabled={isPending}
-            >
-              <Label
-                htmlFor="original"
-                className={`flex items-center gap-3 p-4 border rounded-lg cursor-pointer transition-colors ${
-                  enhanceType === 'original' 
-                    ? 'border-primary bg-primary/5' 
-                    : 'border-border hover:border-primary/50'
-                }`}
-              >
-                <RadioGroupItem value="original" id="original" />
-                <div className="flex items-center gap-2">
-                  <MessageSquare className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-foreground">Original</span>
-                </div>
-              </Label>
+      <div className="space-y-2">
+        <Label className="text-xs">Enhancement</Label>
+        <RadioGroup
+          value={enhanceType}
+          onValueChange={setEnhanceType}
+          className="flex flex-wrap gap-2"
+          disabled={isPending}
+        >
+          <Label
+            htmlFor="original"
+            className={`flex items-center gap-2 px-3 py-1.5 border rounded-md cursor-pointer text-xs transition-colors ${
+              enhanceType === 'original' ? 'border-foreground bg-foreground text-background' : 'border-border hover:border-foreground/50'
+            }`}
+          >
+            <RadioGroupItem value="original" id="original" className="sr-only" />
+            Original
+          </Label>
 
-              <Label
-                htmlFor="emoji"
-                className={`flex items-center gap-3 p-4 border rounded-lg cursor-pointer transition-colors ${
-                  enhanceType === 'emoji' 
-                    ? 'border-primary bg-primary/5' 
-                    : 'border-border hover:border-primary/50'
-                }`}
-              >
-                <RadioGroupItem value="emoji" id="emoji" />
-                <div className="flex items-center gap-2">
-                  <Sparkles className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-foreground">Emoji Only</span>
-                </div>
-              </Label>
+          <Label
+            htmlFor="emoji"
+            className={`flex items-center gap-2 px-3 py-1.5 border rounded-md cursor-pointer text-xs transition-colors ${
+              enhanceType === 'emoji' ? 'border-foreground bg-foreground text-background' : 'border-border hover:border-foreground/50'
+            }`}
+          >
+            <RadioGroupItem value="emoji" id="emoji" className="sr-only" />
+            Emoji Only
+          </Label>
 
-              <Label
-                htmlFor="translate"
-                className={`flex items-center gap-3 p-4 border rounded-lg cursor-pointer transition-colors ${
-                  enhanceType === 'translate' 
-                    ? 'border-primary bg-primary/5' 
-                    : 'border-border hover:border-primary/50'
-                }`}
-              >
-                <RadioGroupItem value="translate" id="translate" />
-                <div className="flex items-center gap-2">
-                  <Globe className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-foreground">Translate</span>
-                </div>
-              </Label>
-            </RadioGroup>
+          <Label
+            htmlFor="translate"
+            className={`flex items-center gap-2 px-3 py-1.5 border rounded-md cursor-pointer text-xs transition-colors ${
+              enhanceType === 'translate' ? 'border-foreground bg-foreground text-background' : 'border-border hover:border-foreground/50'
+            }`}
+          >
+            <RadioGroupItem value="translate" id="translate" className="sr-only" />
+            Translate
+          </Label>
+        </RadioGroup>
 
-            {enhanceType === 'translate' && (
-              <Select value={targetLanguage} onValueChange={setTargetLanguage} disabled={isPending}>
-                <SelectTrigger className="w-full sm:w-64">
-                  <SelectValue placeholder="Select target language" />
-                </SelectTrigger>
-                <SelectContent>
-                  {LANGUAGES.map((lang) => (
-                    <SelectItem key={lang.value} value={lang.value}>
-                      {lang.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            )}
-          </div>
+        {enhanceType === 'translate' && (
+          <Select value={targetLanguage} onValueChange={setTargetLanguage} disabled={isPending}>
+            <SelectTrigger className="w-full sm:w-48 h-9 text-xs">
+              <SelectValue placeholder="Select language" />
+            </SelectTrigger>
+            <SelectContent>
+              {LANGUAGES.map((lang) => (
+                <SelectItem key={lang.value} value={lang.value} className="text-xs">
+                  {lang.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        )}
+      </div>
 
-          {/* Result Message */}
-          {result && (
-            <div
-              className={`flex items-center gap-2 p-4 rounded-lg ${
-                result.success 
-                  ? 'bg-green-50 text-green-800 dark:bg-green-950 dark:text-green-200' 
-                  : 'bg-red-50 text-red-800 dark:bg-red-950 dark:text-red-200'
-              }`}
-            >
-              {result.success ? (
-                <CheckCircle className="h-5 w-5 flex-shrink-0" />
-              ) : (
-                <XCircle className="h-5 w-5 flex-shrink-0" />
-              )}
-              <p className="text-sm">{result.success ? result.message : result.error}</p>
-            </div>
-          )}
+      {result && (
+        <p className={`text-xs ${result.success ? 'text-muted-foreground' : 'text-destructive'}`}>
+          {result.success ? result.message : result.error}
+        </p>
+      )}
 
-          <Button type="submit" disabled={isPending} className="w-full sm:w-auto gap-2">
-            {isPending ? (
-              <>
-                <Loader2 className="h-4 w-4 animate-spin" />
-                Processing...
-              </>
-            ) : (
-              <>
-                <Send className="h-4 w-4" />
-                Submit Message
-              </>
-            )}
-          </Button>
-        </form>
-      </CardContent>
-    </Card>
+      <Button type="submit" disabled={isPending} size="sm">
+        {isPending ? (
+          <>
+            <Loader2 className="h-3.5 w-3.5 animate-spin mr-1.5" />
+            Submitting...
+          </>
+        ) : (
+          'Submit'
+        )}
+      </Button>
+    </form>
   )
 }
