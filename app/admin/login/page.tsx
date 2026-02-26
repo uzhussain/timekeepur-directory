@@ -68,7 +68,7 @@ export default function AdminLoginPage() {
               <Input
                 id="email"
                 type="email"
-                placeholder="admin@timekeepur.com"
+                placeholder="Enter email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
@@ -94,9 +94,6 @@ export default function AdminLoginPage() {
               {isLoading ? 'Signing in...' : 'Sign In'}
             </Button>
           </form>
-          <p className="text-[10px] text-muted-foreground mt-4 text-center">
-            Default: admin@timekeepur.com / admin123
-          </p>
         </div>
       </main>
     </div>
