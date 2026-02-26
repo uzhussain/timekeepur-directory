@@ -1,14 +1,11 @@
 'use client'
 
 import { useState, useTransition } from 'react'
-import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Textarea } from '@/components/ui/textarea'
 import { GuestbookMessage } from '@/lib/db'
 import { approveMessage, rejectMessage } from '@/app/actions/message-actions'
-import { Check, X, User, Sparkles, Globe, Loader2, Clock, Mail } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
 
 interface AdminMessageListProps {
@@ -56,41 +53,36 @@ export function AdminMessageList({ initialMessages }: AdminMessageListProps) {
   const pendingCount = messages.filter(m => m.status === 'pending').length
 
   return (
-    <div>
-      <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="mb-6">
-          <TabsTrigger value="pending" className="gap-2">
-            Pending
-            {pendingCount > 0 && (
-              <Badge variant="secondary" className="ml-1">{pendingCount}</Badge>
-            )}
-          </TabsTrigger>
-          <TabsTrigger value="approved">Approved</TabsTrigger>
-          <TabsTrigger value="rejected">Rejected</TabsTrigger>
-          <TabsTrigger value="all">All</TabsTrigger>
-        </TabsList>
+    <Tabs value={activeTab} onValueChange={setActiveTab}>
+      <TabsList className="mb-4 h-8">
+        <TabsTrigger value="pending" className="text-xs h-7">
+          Pending {pendingCount > 0 && `(${pendingCount})`}
+        </TabsTrigger>
+        <TabsTrigger value="approved" className="text-xs h-7">Approved</TabsTrigger>
+        <TabsTrigger value="rejected" className="text-xs h-7">Rejected</TabsTrigger>
+        <TabsTrigger value="all" className="text-xs h-7">All</TabsTrigger>
+      </TabsList>
 
-        <TabsContent value={activeTab} className="space-y-4">
-          {filteredMessages.length === 0 ? (
-            <div className="text-center py-12 border border-dashed border-border rounded-lg">
-              <p className="text-muted-foreground">No messages in this category</p>
-            </div>
-          ) : (
-            filteredMessages.map((message) => (
-              <MessageItem
-                key={message.id}
-                message={message}
-                isProcessing={processingId === message.id && isPending}
-                onApprove={() => handleApprove(message.id)}
-                onReject={() => handleReject(message.id)}
-                notes={notes[message.id] || ''}
-                onNotesChange={(value) => setNotes(prev => ({ ...prev, [message.id]: value }))}
-              />
-            ))
-          )}
-        </TabsContent>
-      </Tabs>
-    </div>
+      <TabsContent value={activeTab} className="space-y-3">
+        {filteredMessages.length === 0 ? (
+          <div className="py-12 text-center">
+            <p className="text-sm text-muted-foreground">No messages</p>
+          </div>
+        ) : (
+          filteredMessages.map((message) => (
+            <MessageItem
+              key={message.id}
+              message={message}
+              isProcessing={processingId === message.id && isPending}
+              onApprove={() => handleApprove(message.id)}
+              onReject={() => handleReject(message.id)}
+              notes={notes[message.id] || ''}
+              onNotesChange={(value) => setNotes(prev => ({ ...prev, [message.id]: value }))}
+            />
+          ))
+        )}
+      </TabsContent>
+    </Tabs>
   )
 }
 
@@ -111,131 +103,84 @@ function MessageItem({
   notes,
   onNotesChange
 }: MessageItemProps) {
-  const enhanceIcon = message.enhanced_type === 'emoji' 
-    ? <Sparkles className="h-3 w-3" />
-    : message.enhanced_type === 'translated' 
-    ? <Globe className="h-3 w-3" />
-    : null
-
-  const enhanceLabel = message.enhanced_type === 'emoji'
-    ? 'Emoji'
-    : message.enhanced_type === 'translated'
-    ? message.language.toUpperCase()
-    : null
-
   return (
-    <Card className="border-border">
-      <CardContent className="pt-6">
-        <div className="flex flex-col lg:flex-row lg:items-start gap-4">
-          {/* Message Content */}
-          <div className="flex-1">
-            <div className="flex items-start justify-between gap-4 mb-3">
-              <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-full bg-muted flex items-center justify-center">
-                  <User className="h-5 w-5 text-muted-foreground" />
-                </div>
-                <div>
-                  <p className="font-medium text-foreground">{message.name}</p>
-                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                    <Clock className="h-3 w-3" />
-                    {formatDistanceToNow(new Date(message.created_at), { addSuffix: true })}
-                    {message.email && (
-                      <>
-                        <span className="text-border">|</span>
-                        <Mail className="h-3 w-3" />
-                        {message.email}
-                      </>
-                    )}
-                  </div>
-                </div>
-              </div>
-              <div className="flex items-center gap-2">
-                {enhanceLabel && (
-                  <Badge variant="outline" className="gap-1 text-xs">
-                    {enhanceIcon}
-                    {enhanceLabel}
-                  </Badge>
-                )}
-                <Badge 
-                  variant={
-                    message.status === 'approved' 
-                      ? 'default' 
-                      : message.status === 'rejected' 
-                      ? 'destructive' 
-                      : 'secondary'
-                  }
-                >
-                  {message.status}
-                </Badge>
-              </div>
-            </div>
-            
-            <p className={`text-foreground ${message.enhanced_type === 'emoji' ? 'text-2xl' : ''}`}>
-              {message.message}
-            </p>
-            
-            {message.original_message && (
-              <p className="mt-2 text-sm text-muted-foreground italic">
-                Original: {message.original_message}
-              </p>
-            )}
-          </div>
-
-          {/* Actions (only for pending) */}
-          {message.status === 'pending' && (
-            <div className="lg:w-72 space-y-3 lg:border-l lg:border-border lg:pl-4">
-              <Textarea
-                placeholder="Add notes (optional)"
-                value={notes}
-                onChange={(e) => onNotesChange(e.target.value)}
-                rows={2}
-                disabled={isProcessing}
-                className="text-sm"
-              />
-              <div className="flex gap-2">
-                <Button
-                  onClick={onApprove}
-                  disabled={isProcessing}
-                  className="flex-1 gap-2"
-                  size="sm"
-                >
-                  {isProcessing ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  ) : (
-                    <Check className="h-4 w-4" />
-                  )}
-                  Approve
-                </Button>
-                <Button
-                  onClick={onReject}
-                  disabled={isProcessing}
-                  variant="destructive"
-                  className="flex-1 gap-2"
-                  size="sm"
-                >
-                  {isProcessing ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  ) : (
-                    <X className="h-4 w-4" />
-                  )}
-                  Reject
-                </Button>
-              </div>
-            </div>
-          )}
-
-          {/* Moderation info for processed messages */}
-          {message.status !== 'pending' && message.moderated_by && (
-            <div className="lg:w-48 text-sm text-muted-foreground lg:border-l lg:border-border lg:pl-4">
-              <p>Moderated by:</p>
-              <p className="font-medium text-foreground truncate">{message.moderated_by}</p>
-              {message.moderation_notes && (
-                <p className="mt-1 italic">{message.moderation_notes}</p>
-              )}
-            </div>
+    <article className="border border-border rounded p-4">
+      <div className="flex items-baseline justify-between gap-3 mb-2">
+        <div className="flex items-baseline gap-2 min-w-0">
+          <span className="text-sm font-medium truncate">{message.name}</span>
+          {message.email && (
+            <span className="text-[11px] text-muted-foreground truncate hidden sm:inline">
+              {message.email}
+            </span>
           )}
         </div>
-      </CardContent>
-    </Card>
+        <div className="flex items-center gap-2">
+          {message.enhanced_type !== 'original' && (
+            <span className="text-[10px] text-muted-foreground uppercase tracking-wide">
+              {message.enhanced_type === 'emoji' ? 'emoji' : message.language}
+            </span>
+          )}
+          <span className={`text-[10px] uppercase tracking-wide ${
+            message.status === 'approved' 
+              ? 'text-foreground' 
+              : message.status === 'rejected' 
+              ? 'text-destructive' 
+              : 'text-muted-foreground'
+          }`}>
+            {message.status}
+          </span>
+          <time className="text-[11px] text-muted-foreground">
+            {formatDistanceToNow(new Date(message.created_at), { addSuffix: true })}
+          </time>
+        </div>
+      </div>
+      
+      <p className={`text-sm leading-relaxed ${message.enhanced_type === 'emoji' ? 'text-lg' : ''}`}>
+        {message.message}
+      </p>
+      
+      {message.original_message && (
+        <p className="text-[11px] text-muted-foreground mt-2">
+          Original: {message.original_message}
+        </p>
+      )}
+
+      {message.status === 'pending' && (
+        <div className="flex items-center gap-2 pt-3 mt-3 border-t border-border">
+          <Textarea
+            placeholder="Notes (optional)"
+            value={notes}
+            onChange={(e) => onNotesChange(e.target.value)}
+            rows={1}
+            disabled={isProcessing}
+            className="text-xs h-8 min-h-8 resize-none flex-1"
+          />
+          <Button
+            onClick={onApprove}
+            disabled={isProcessing}
+            size="sm"
+            className="h-8 text-xs"
+          >
+            {isProcessing ? 'Processing...' : 'Approve'}
+          </Button>
+          <Button
+            onClick={onReject}
+            disabled={isProcessing}
+            variant="outline"
+            size="sm"
+            className="h-8 text-xs"
+          >
+            Reject
+          </Button>
+        </div>
+      )}
+
+      {message.status !== 'pending' && message.moderated_by && (
+        <p className="text-[10px] text-muted-foreground pt-2 mt-2 border-t border-border">
+          Moderated by {message.moderated_by}
+          {message.moderation_notes && ` - ${message.moderation_notes}`}
+        </p>
+      )}
+    </article>
   )
 }

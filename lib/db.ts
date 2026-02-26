@@ -77,14 +77,15 @@ export async function updateMessageStatus(
   moderatedBy: string,
   notes?: string
 ): Promise<GuestbookMessage> {
+  const now = new Date().toISOString()
   const result = await sql`
     UPDATE guestbook_messages 
     SET 
       status = ${status},
       moderated_by = ${moderatedBy},
       moderation_notes = ${notes || null},
-      updated_at = NOW(),
-      approved_at = ${status === 'approved' ? sql`NOW()` : null}
+      updated_at = ${now},
+      approved_at = ${status === 'approved' ? now : null}
     WHERE id = ${id}
     RETURNING *
   `

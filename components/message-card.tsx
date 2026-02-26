@@ -1,7 +1,4 @@
-import { Card, CardContent } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
 import { GuestbookMessage } from '@/lib/db'
-import { Sparkles, Globe, User } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
 
 interface MessageCardProps {
@@ -10,66 +7,42 @@ interface MessageCardProps {
 }
 
 export function MessageCard({ message, showStatus = false }: MessageCardProps) {
-  const enhanceIcon = message.enhanced_type === 'emoji' 
-    ? <Sparkles className="h-3 w-3" />
-    : message.enhanced_type === 'translated' 
-    ? <Globe className="h-3 w-3" />
-    : null
-
-  const enhanceLabel = message.enhanced_type === 'emoji'
-    ? 'Emoji'
-    : message.enhanced_type === 'translated'
-    ? message.language.toUpperCase()
-    : null
-
   return (
-    <Card className="border-border">
-      <CardContent className="pt-6">
-        <div className="flex items-start justify-between gap-4 mb-3">
-          <div className="flex items-center gap-2">
-            <div className="h-8 w-8 rounded-full bg-muted flex items-center justify-center">
-              <User className="h-4 w-4 text-muted-foreground" />
-            </div>
-            <div>
-              <p className="font-medium text-foreground">{message.name}</p>
-              <p className="text-xs text-muted-foreground">
-                {formatDistanceToNow(new Date(message.approved_at || message.created_at), { addSuffix: true })}
-              </p>
-            </div>
-          </div>
-          <div className="flex items-center gap-2">
-            {enhanceLabel && (
-              <Badge variant="secondary" className="gap-1 text-xs">
-                {enhanceIcon}
-                {enhanceLabel}
-              </Badge>
-            )}
-            {showStatus && (
-              <Badge 
-                variant={
-                  message.status === 'approved' 
-                    ? 'default' 
-                    : message.status === 'rejected' 
-                    ? 'destructive' 
-                    : 'secondary'
-                }
-              >
-                {message.status}
-              </Badge>
-            )}
-          </div>
+    <article className="border border-border rounded p-4">
+      <div className="flex items-baseline justify-between gap-3 mb-2">
+        <span className="text-sm font-medium">{message.name}</span>
+        <div className="flex items-center gap-2">
+          {message.enhanced_type !== 'original' && (
+            <span className="text-[10px] text-muted-foreground uppercase tracking-wide">
+              {message.enhanced_type === 'emoji' ? 'emoji' : message.language}
+            </span>
+          )}
+          {showStatus && (
+            <span className={`text-[10px] uppercase tracking-wide ${
+              message.status === 'approved' 
+                ? 'text-foreground' 
+                : message.status === 'rejected' 
+                ? 'text-destructive' 
+                : 'text-muted-foreground'
+            }`}>
+              {message.status}
+            </span>
+          )}
+          <time className="text-[11px] text-muted-foreground">
+            {formatDistanceToNow(new Date(message.approved_at || message.created_at), { addSuffix: true })}
+          </time>
         </div>
-        
-        <p className={`text-foreground ${message.enhanced_type === 'emoji' ? 'text-2xl' : ''}`}>
-          {message.message}
+      </div>
+      
+      <p className={`text-sm leading-relaxed ${message.enhanced_type === 'emoji' ? 'text-lg' : ''}`}>
+        {message.message}
+      </p>
+      
+      {message.original_message && (
+        <p className="mt-2 text-[11px] text-muted-foreground">
+          Original: {message.original_message}
         </p>
-        
-        {message.original_message && (
-          <p className="mt-2 text-sm text-muted-foreground italic">
-            Original: {message.original_message}
-          </p>
-        )}
-      </CardContent>
-    </Card>
+      )}
+    </article>
   )
 }
