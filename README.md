@@ -4,6 +4,10 @@ A clean, moderated message board for communities and OSS directories.
 
 Built with **Next.js**, powered by **Vercel AI Gateway** for AI workflows, and backed by **Neon Postgres**.
 
+[Use this template on GitHub](https://github.com/uzhussain/timekeepur-directory/generate)
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/uzhussain/timekeepur-directory&project-name=directory-message-board&repository-name=directory-message-board&framework=nextjs&env=DATABASE_URL,ADMIN_EMAIL,ADMIN_PASSWORD,AI_GATEWAY_API_KEY&envDescription=Neon%20database%2C%20admin%20auth%2C%20and%20Vercel%20AI%20Gateway%20key)
+
 ## Features
 
 - Public feed of approved messages
@@ -18,6 +22,18 @@ Built with **Next.js**, powered by **Vercel AI Gateway** for AI workflows, and b
 - Tailwind CSS + shadcn/ui
 - Vercel AI SDK + Vercel AI Gateway
 - Neon Serverless Postgres
+
+## One-Click Deploy
+
+1. Click **Deploy with Vercel**.
+2. Connect your GitHub account and create a new repo.
+3. In Vercel, create or connect a **Neon Postgres** database from Marketplace/Storage.
+4. Set environment variables:
+   - `DATABASE_URL` (from Neon)
+   - `ADMIN_EMAIL`
+   - `ADMIN_PASSWORD`
+   - `AI_GATEWAY_API_KEY`
+5. Deploy.
 
 ## Quick Start
 
