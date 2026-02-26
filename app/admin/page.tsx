@@ -1,14 +1,64 @@
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
-import { BookOpen, ArrowLeft, Shield } from 'lucide-react'
+import { BookOpen, ArrowLeft, Shield, AlertTriangle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { stackServerApp } from '@/lib/stack-auth'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { getStackServerApp, isStackAuthConfigured } from '@/lib/stack-auth'
 import { getAllMessages } from '@/lib/db'
 import { AdminMessageList } from '@/components/admin-message-list'
-import { SignOut } from '@stack-auth/react'
 
 export default async function AdminPage() {
-  const user = await stackServerApp.getUser()
+  // Check if Stack Auth is configured
+  if (!isStackAuthConfigured) {
+    return (
+      <div className="min-h-screen bg-background">
+        <nav className="border-b border-border">
+          <div className="mx-auto max-w-6xl px-4 py-4 flex items-center justify-between">
+            <Link href="/" className="flex items-center gap-2">
+              <BookOpen className="h-6 w-6 text-foreground" />
+              <span className="font-semibold text-lg text-foreground">Timekeepur Directory</span>
+            </Link>
+          </div>
+        </nav>
+        <main className="py-12 px-4">
+          <div className="mx-auto max-w-2xl">
+            <Card className="border-yellow-200 dark:border-yellow-800 bg-yellow-50 dark:bg-yellow-950">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-yellow-800 dark:text-yellow-200">
+                  <AlertTriangle className="h-5 w-5" />
+                  Stack Auth Not Configured
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="text-yellow-700 dark:text-yellow-300">
+                <p className="mb-4">
+                  To access the admin dashboard, you need to configure Stack Auth (Neon Auth).
+                </p>
+                <p className="text-sm">
+                  Required environment variables:
+                </p>
+                <ul className="list-disc list-inside text-sm mt-2 space-y-1">
+                  <li><code className="bg-yellow-100 dark:bg-yellow-900 px-1 rounded">NEXT_PUBLIC_STACK_PROJECT_ID</code></li>
+                  <li><code className="bg-yellow-100 dark:bg-yellow-900 px-1 rounded">STACK_SECRET_SERVER_KEY</code></li>
+                </ul>
+                <p className="text-sm mt-4">
+                  These are automatically provided when you enable Neon Auth in your project.
+                </p>
+                <Link href="/" className="inline-block mt-4">
+                  <Button variant="outline" className="gap-2">
+                    <ArrowLeft className="h-4 w-4" />
+                    Back to Site
+                  </Button>
+                </Link>
+              </CardContent>
+            </Card>
+          </div>
+        </main>
+      </div>
+    )
+  }
+
+  const stackApp = await getStackServerApp()
+  const user = stackApp ? await stackApp.getUser() : null
   
   if (!user) {
     redirect('/admin/login')
@@ -18,6 +68,9 @@ export default async function AdminPage() {
   const pendingCount = messages.filter(m => m.status === 'pending').length
   const approvedCount = messages.filter(m => m.status === 'approved').length
   const rejectedCount = messages.filter(m => m.status === 'rejected').length
+
+  // Dynamically import SignOut only when Stack Auth is configured
+  const { SignOut } = await import('@stack-auth/react')
 
   return (
     <div className="min-h-screen bg-background">

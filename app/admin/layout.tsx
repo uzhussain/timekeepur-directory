@@ -1,16 +1,25 @@
-import { StackProvider, StackTheme } from "@stack-auth/react"
-import { stackServerApp } from "@/lib/stack-auth"
+import { getStackServerApp, isStackAuthConfigured } from "@/lib/stack-auth"
 
-export default function AdminLayout({
+export default async function AdminLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
-  return (
-    <StackProvider app={stackServerApp}>
-      <StackTheme>
-        {children}
-      </StackTheme>
-    </StackProvider>
-  )
+  // Only wrap with StackProvider if Stack Auth is configured
+  if (isStackAuthConfigured) {
+    const stackApp = await getStackServerApp()
+    if (stackApp) {
+      const { StackProvider, StackTheme } = await import("@stack-auth/react")
+      return (
+        <StackProvider app={stackApp}>
+          <StackTheme>
+            {children}
+          </StackTheme>
+        </StackProvider>
+      )
+    }
+  }
+  
+  // Fallback: render without Stack Auth wrapper
+  return <>{children}</>
 }
