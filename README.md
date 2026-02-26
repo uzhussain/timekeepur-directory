@@ -95,9 +95,9 @@ Open `http://localhost:3000`.
 
 ## OSS Notes
 
-- Read `CONTRIBUTING.md` before opening a PR
-- See `SECURITY.md` for responsible disclosure
-- Follow `CODE_OF_CONDUCT.md` for community standards
+- Read `.github/CONTRIBUTING.md` before opening a PR
+- See `.github/SECURITY.md` for responsible disclosure
+- Follow `.github/CODE_OF_CONDUCT.md` for community standards
 
 ## Official Author
 
