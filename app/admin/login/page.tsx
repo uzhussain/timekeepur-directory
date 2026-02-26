@@ -45,12 +45,13 @@ export default function AdminLoginPage() {
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <header className="border-b border-border">
-        <div className="mx-auto max-w-2xl px-4 h-12 flex items-center justify-between">
-          <Link href="/" className="text-sm font-medium tracking-tight">
-            Timekeepur
+        <div className="mx-auto max-w-2xl px-4 h-14 flex items-center justify-between">
+          <Link href="/" className="flex items-baseline gap-1.5">
+            <span className="text-sm font-semibold tracking-tight">TIMEKEEPUR</span>
+            <span className="text-[10px] text-muted-foreground font-medium tracking-widest">LABS</span>
           </Link>
           <Link href="/" className="text-xs text-muted-foreground hover:text-foreground transition-colors">
-            Back
+            Home
           </Link>
         </div>
       </header>

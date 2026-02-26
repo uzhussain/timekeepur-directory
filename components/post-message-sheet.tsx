@@ -63,7 +63,7 @@ export function PostMessageSheet() {
       </SheetTrigger>
       <SheetContent side="right" className="w-full sm:max-w-md">
         <SheetHeader>
-          <SheetTitle className="text-base">Sign the Directory</SheetTitle>
+          <SheetTitle className="text-base">Sign the Guestbook</SheetTitle>
           <SheetDescription className="text-xs">
             Your message will be reviewed before appearing publicly.
           </SheetDescription>

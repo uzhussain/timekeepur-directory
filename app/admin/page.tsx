@@ -27,8 +27,9 @@ export default async function AdminPage() {
     <div className="min-h-screen flex flex-col bg-background">
       <header className="border-b border-border">
         <div className="mx-auto max-w-3xl px-4 h-12 flex items-center justify-between">
-          <Link href="/" className="text-sm font-medium tracking-tight">
-            Timekeepur
+          <Link href="/" className="flex items-baseline gap-1.5">
+            <span className="text-sm font-semibold tracking-tight">TIMEKEEPUR</span>
+            <span className="text-[10px] text-muted-foreground font-medium tracking-widest">LABS</span>
           </Link>
           <div className="flex items-center gap-4">
             <span className="text-xs text-muted-foreground">{session.email}</span>
@@ -48,9 +49,9 @@ export default async function AdminPage() {
               <h1 className="text-lg font-medium tracking-tight">Admin</h1>
               <p className="text-xs text-muted-foreground mt-0.5">Moderate submissions</p>
             </div>
-            <Link href="/">
+            <Link href="/guestbook">
               <Button variant="outline" size="sm" className="h-8 text-xs">
-                Back to Directory
+                View Guestbook
               </Button>
             </Link>
           </div>
