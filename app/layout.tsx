@@ -19,8 +19,8 @@ export const viewport: Viewport = {
 }
 
 export const metadata: Metadata = {
-  title: 'Timekeepur Directory | AI-Powered Guestbook',
-  description: 'Leave your mark in our community guestbook. Messages are AI-enhanced and moderated for a delightful experience.',
+  title: 'TIMEKEEPUR LABS | AI-Powered Guestbook',
+  description: 'A modern guestbook for the AI era. Leave your mark with intelligent message enhancement, translation, and emoji art.',
   generator: 'v0.app',
   icons: {
     icon: [

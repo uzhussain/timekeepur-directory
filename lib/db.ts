@@ -30,6 +30,16 @@ export async function getApprovedMessages(): Promise<GuestbookMessage[]> {
   return messages as GuestbookMessage[]
 }
 
+export async function getLatestApprovedMessage(): Promise<GuestbookMessage | null> {
+  const messages = await sql`
+    SELECT * FROM guestbook_messages 
+    WHERE status = 'approved' 
+    ORDER BY approved_at DESC
+    LIMIT 1
+  `
+  return (messages[0] as GuestbookMessage) || null
+}
+
 export async function getPendingMessages(): Promise<GuestbookMessage[]> {
   const messages = await sql`
     SELECT * FROM guestbook_messages 

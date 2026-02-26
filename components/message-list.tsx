@@ -12,7 +12,7 @@ export function MessageList({ messages }: MessageListProps) {
     return (
       <div className="py-16 text-center">
         <p className="text-sm text-muted-foreground">No entries yet</p>
-        <p className="text-xs text-muted-foreground mt-1">Be the first to sign the directory</p>
+        <p className="text-xs text-muted-foreground mt-1">Be the first to sign the guestbook</p>
       </div>
     )
   }
