@@ -3,12 +3,10 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { getLatestApprovedMessage } from '@/lib/db'
 import { RecentMessagePreview } from '@/components/recent-message-preview'
-import { unstable_cacheTag as cacheTag } from 'next/cache'
+
+export const revalidate = 60 // Revalidate every 60 seconds
 
 export default async function HomePage() {
-  'use cache'
-  cacheTag('guestbook-messages')
-  
   const latestMessage = await getLatestApprovedMessage()
 
   return (
