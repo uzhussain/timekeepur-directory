@@ -26,13 +26,15 @@ test.describe('Guestbook moderation flow', () => {
     await page.getByLabel('Password').fill(process.env.ADMIN_PASSWORD!)
     await page.getByRole('button', { name: 'Sign In' }).click()
 
-    await expect(page.getByRole('heading', { name: 'Admin' })).toBeVisible()
+    await expect(page).toHaveURL(/\/admin$/)
+    await expect(page.getByText('Moderate submissions')).toBeVisible()
 
     const pendingMessageRow = page.locator('article').filter({ hasText: message }).first()
     await expect(pendingMessageRow).toBeVisible()
     await pendingMessageRow.getByRole('button', { name: 'Approve' }).click()
+    await expect(pendingMessageRow).toBeHidden({ timeout: 10000 })
 
     await page.goto('/guestbook')
-    await expect(page.getByText(message)).toBeVisible()
+    await expect(page.getByText(message)).toBeVisible({ timeout: 10000 })
   })
 })

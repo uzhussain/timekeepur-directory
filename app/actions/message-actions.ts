@@ -3,13 +3,19 @@
 import { createMessage, updateMessageStatus } from '@/lib/db'
 import { moderateMessage, translateMessage, convertToEmoji } from './ai-actions'
 import { getSession } from '@/lib/auth'
-import { revalidateTag } from 'next/cache'
+import { revalidatePath } from 'next/cache'
 
 export type SubmitResult = {
   success: boolean
   message?: string
   error?: string
   moderationPassed?: boolean
+}
+
+function revalidateGuestbookViews() {
+  // Keep the public feed and homepage preview in sync after moderation events.
+  revalidatePath('/guestbook')
+  revalidatePath('/')
 }
 
 export async function submitGuestbookMessage(formData: FormData): Promise<SubmitResult> {
@@ -72,7 +78,7 @@ export async function submitGuestbookMessage(formData: FormData): Promise<Submit
       language,
     })
 
-    revalidateTag('guestbook-messages', 'max')
+    revalidateGuestbookViews()
 
     return { 
       success: true, 
@@ -94,7 +100,8 @@ export async function approveMessage(id: number, notes?: string): Promise<Submit
 
   try {
     await updateMessageStatus(id, 'approved', session.email, notes)
-    revalidateTag('guestbook-messages', 'max')
+    revalidateGuestbookViews()
+    revalidatePath('/admin')
     return { success: true, message: 'Message approved successfully' }
   } catch (error) {
     console.error('Error approving message:', error)
@@ -111,7 +118,8 @@ export async function rejectMessage(id: number, notes?: string): Promise<SubmitR
 
   try {
     await updateMessageStatus(id, 'rejected', session.email, notes)
-    revalidateTag('guestbook-messages', 'max')
+    revalidateGuestbookViews()
+    revalidatePath('/admin')
     return { success: true, message: 'Message rejected' }
   } catch (error) {
     console.error('Error rejecting message:', error)
