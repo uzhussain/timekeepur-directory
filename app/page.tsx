@@ -120,7 +120,7 @@ export default async function HomePage() {
                 href="https://x.com/timekeepur"
                 target="_blank"
                 rel="noreferrer"
-                className="hover:underline underline-offset-2"
+                className="text-foreground border-b border-dashed border-foreground pb-[1px] hover:border-solid"
               >
                 Timekeepur
               </Link>{' '}
