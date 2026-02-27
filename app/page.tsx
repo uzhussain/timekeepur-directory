@@ -115,7 +115,16 @@ export default async function HomePage() {
               <span className="text-[9px] text-muted-foreground font-medium tracking-widest">LABS</span>
             </div>
             <p className="text-[11px] text-muted-foreground">
-              Built with Next.js, Neon, and Vercel AI Gateway
+              Built by{' '}
+              <Link
+                href="https://x.com/timekeepur"
+                target="_blank"
+                rel="noreferrer"
+                className="hover:underline underline-offset-2"
+              >
+                Timekeepur
+              </Link>{' '}
+              on Next.js, Neon, and Vercel AI Gateway
             </p>
           </div>
         </div>
