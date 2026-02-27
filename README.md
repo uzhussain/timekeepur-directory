@@ -22,6 +22,8 @@ Built with **Next.js**, powered by **Vercel AI Gateway** for AI workflows, and b
 - Tailwind CSS + shadcn/ui
 - Vercel AI SDK + Vercel AI Gateway
 - Neon Serverless Postgres
+- Vitest (unit/integration testing)
+- Playwright (end-to-end testing)
 
 ## One-Click Deploy
 
