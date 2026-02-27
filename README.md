@@ -86,12 +86,62 @@ pnpm dev
 
 Open `http://localhost:3000`.
 
+## Testing
+
+This project includes:
+
+- Unit/integration tests with **Vitest** (`tests/unit`)
+- End-to-end moderation flow tests with **Playwright** (`tests/e2e`)
+
+### Run unit/integration tests
+
+```bash
+pnpm test
+```
+
+Useful variants:
+
+```bash
+pnpm test:watch
+pnpm test:coverage
+```
+
+### Run end-to-end tests
+
+1. Install Playwright browsers (one-time per machine):
+
+```bash
+pnpm exec playwright install
+```
+
+2. Run E2E tests with real admin credentials:
+
+```bash
+ADMIN_EMAIL="your-admin-email" ADMIN_PASSWORD="your-admin-password" pnpm test:e2e
+```
+
+If you already have the app running on `http://127.0.0.1:3000`, run Playwright against that server:
+
+```bash
+CI= PLAYWRIGHT_TEST_BASE_URL=http://127.0.0.1:3000 ADMIN_EMAIL="your-admin-email" ADMIN_PASSWORD="your-admin-password" pnpm test:e2e
+```
+
+### E2E troubleshooting
+
+- `1 skipped`: `ADMIN_EMAIL` and/or `ADMIN_PASSWORD` were not provided.
+- `ERR_CONNECTION_REFUSED`: app is not reachable at `PLAYWRIGHT_TEST_BASE_URL`.
+- `Executable doesn't exist`: Playwright browser binaries are not installed (`pnpm exec playwright install`).
+
 ## Scripts
 
 - `pnpm dev` - local development
 - `pnpm build` - production build
 - `pnpm start` - start production server
 - `pnpm lint` - lint checks
+- `pnpm test` - run Vitest unit/integration tests
+- `pnpm test:watch` - run Vitest in watch mode
+- `pnpm test:coverage` - generate coverage report (V8)
+- `pnpm test:e2e` - run Playwright end-to-end tests
 
 ## OSS Notes
 
